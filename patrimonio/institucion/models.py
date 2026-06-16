@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.db import models
-from django.db.models import Sum, Max
+
 
 
 # Create your models here.
@@ -13,20 +13,27 @@ class Museo(models.Model):
         return (f"Nombre: {self.nombre}")
 
     def costo_total_produccion(self):
-        total = self.guias.aggregate(total=Sum('exhibiciones__costo_produccion'))['total']
+        total = Decimal('0.00')
+        for guia in self.guias.all():
+            for exhib in guia.exhibiciones.all():
+                if exhib.costo_produccion is not None:
+                    total += exhib.costo_produccion
+        return total
 
-    costo_total_produccion.short_description = 'Costo total'
+    costo_total_produccion.short_description = 'Costo total producción'
 
     def guias_mas_experiencia(self):
-        """Retorna los nombres de los/las guía(s) con más años de experiencia
-        en este museo, separados por coma si son varios.
-        """
-        agg = self.guias.aggregate(max_exp=Max('anios_experiencia_guia'))
-        max_exp = agg.get('max_exp')
-        if max_exp is None:
+        max_exp = None
+        nombres = []
+        for guia in self.guias.all():
+            exp = guia.anios_experiencia_guia
+            if max_exp is None or exp > max_exp:
+                max_exp = exp
+                nombres = [guia.nombre_completo]
+            elif exp == max_exp:
+                nombres.append(guia.nombre_completo)
+        if not nombres:
             return ''
-        nombres = list(self.guias.filter(anios_experiencia_guia=max_exp)
-                       .values_list('nombre_completo', flat=True))
         return ', '.join(nombres)
 
     guias_mas_experiencia.short_description = 'Guía(s) más experta(s)'
