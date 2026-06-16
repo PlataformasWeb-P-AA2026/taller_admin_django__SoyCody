@@ -24,3 +24,9 @@ class Guia_de_museo(models.Model):
 
     def __str__(self):
         return (f"Nombres Completos: {self.nombre_competo} | Experiencia: {self.años_experiencia_guia} años")
+
+class Exhibicion(models.Model):
+    titulo_exhibicion=models.CharField()
+    duracion_meses=models.IntegerField()
+    costo_produccion=models.DecimalField(max_digits=10, decimal_places=2)
+    tematica=models.CharField()
