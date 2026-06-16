@@ -4,4 +4,4 @@
 ![Captura uno](image.png)
 
 ## PgAdmin + Admin de Django
-![Captura dos](Screenshot 2026-06-16 150239.png)
+![Captura dos](capturados.png)
